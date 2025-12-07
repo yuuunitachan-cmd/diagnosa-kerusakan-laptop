@@ -11,7 +11,7 @@ class ForwardChainingService
 {
     protected $workingMemory;
     protected $rulesTriggered;
-    protected $conclusions = [];  // UBAH: Array biasa, bukan Collection
+    protected $conclusions = [];  
     protected $diagnosisSteps;
 
     public function getGejalaByKategori()
@@ -25,10 +25,10 @@ class ForwardChainingService
     public function prosesDiagnosa(array $gejalaIds): array
     {
         // Inisialisasi
-        $this->workingMemory = collect($gejalaIds);
-        $this->rulesTriggered = collect();
+        $this->workingMemory = collect($gejalaIds); // gejala yg dproses
+        $this->rulesTriggered = collect(); //rules yg dieksekusi
         $this->conclusions = [];  // Reset ke array kosong
-        $this->diagnosisSteps = collect();
+        $this->diagnosisSteps = collect(); // langkah diagnosa
 
         $stepNumber = 1;
         $changed = true;
@@ -37,10 +37,10 @@ class ForwardChainingService
         $this->addStep($stepNumber, "Memulai analisis dengan gejala yang dipilih", 
                       $this->workingMemory->toArray(), []);
 
-        // Main inference loop - FORWARD CHAINING MURNI
+        // Main inference loop -  
         while ($changed) {
             $changed = false;
-            
+            //ambl smua rules dri dtbase
             $rules = BasisPengetahuan::with(['kerusakan', 'gejala'])
                 ->where('is_aktif', true)
                 ->orderBy('urutan')
@@ -49,6 +49,7 @@ class ForwardChainingService
             foreach ($rules as $rule) {
                 if ($this->isRuleTriggered($rule->id)) continue;
                 
+                // Cek apakah premise rule terpenuhi
                 if ($this->isPremiseTerpenuhi($rule)) {
                     $this->triggerRule($rule, $stepNumber);
                     $changed = true;
@@ -71,7 +72,7 @@ class ForwardChainingService
             'kerusakan_id' => $rule->kerusakan_id
         ]);
 
-        // PERBAIKAN DI SINI: Gunakan array biasa
+       
         $kerusakanId = $rule->kerusakan_id;
         
         if (!isset($this->conclusions[$kerusakanId])) {

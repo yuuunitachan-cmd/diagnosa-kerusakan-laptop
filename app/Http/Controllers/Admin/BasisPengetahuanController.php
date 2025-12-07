@@ -163,7 +163,7 @@ class BasisPengetahuanController extends Controller
     }
 
     /**
-     * Toggle status aktif/nonaktif - ✅ DIPERBAIKI
+     * Toggle status aktif/nonaktif - 
      */
     // Method toggleStatus yang diperbaiki
 public function toggleStatus($id)
